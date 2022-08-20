@@ -58,9 +58,11 @@ function shuffle(array) {
     window.onload = init;
 
     function init() {
+        namespace = "/game";
+        var socket = io(namespace);
+
         let arr = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15];
         arr = shuffle(arr);
-        console.log(arr);
         for (let i = 0; i < die.length; i++) {
             die[i] = dice[arr[i]][Math.floor(Math.random()*5)];
         }
@@ -103,6 +105,20 @@ function shuffle(array) {
                 document.getElementById("word").innerHTML = word;
             }
         );
+
+        document.getElementById("submit").addEventListener("click",
+            function (event) {
+                socket.emit("submit", {data: word});
+                return false;
+            }
+        );
+
+        socket.on("word_response", function(msg) {
+            if (msg.valid) {
+                document.getElementById("wordList").innerHTML += (
+                    "<p class=word>" + msg.word + "</p>");
+            }
+        });
     }
 
     function resetWord() {
