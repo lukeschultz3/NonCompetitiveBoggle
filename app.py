@@ -26,7 +26,8 @@ def submit(word):
     if d.check(word):
         words.append(word)
     emit("word_response",
-         {"word": word, "valid": d.check(word)})
+         {"word": word, "valid": d.check(word)},
+         broadcast=True)
 
 if __name__ == "__main__":
     socket_.run(app, debug=True)
