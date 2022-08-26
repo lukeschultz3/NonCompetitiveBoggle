@@ -115,8 +115,9 @@ function shuffle(array) {
 
         socket.on("word_response", function(msg) {
             if (msg.valid) {
-                document.getElementById("wordList").innerHTML += (
-                    "<p class=word>" + msg.word + "</p>");
+                document.getElementById("wordListInterior").innerHTML = (
+                    "<p class=wordListElement>" + msg.word + "</p>" +
+                    document.getElementById("wordListInterior").innerHTML);
             }
         });
     }

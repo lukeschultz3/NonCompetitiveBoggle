@@ -20,7 +20,7 @@ def index():
 
 @socket_.on("submit", namespace="/game")
 def submit(word):
-    word = word["data"]
+    word = word["data"].lower()
     if word in words:
         return
     if d.check(word):
