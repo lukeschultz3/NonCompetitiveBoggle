@@ -1,24 +1,7 @@
-let dice = [["R", "I", "F", "O", "B", "X"],
-            ["I", "F", "E", "H", "E", "Y"],
-            ["D", "E", "N", "O", "W", "S"],
-            ["U", "T", "O", "K", "N", "D"],
-            ["H", "M", "S", "R", "A", "O"],
-            ["L", "U", "P", "E", "T", "S"],
-            ["A", "C", "I", "T", "O", "A"],
-            ["Y", "L", "G", "K", "U", "E"],
-            ["Qu", "B", "M", "J", "O", "A"],
-            ["E", "H", "I", "S", "P", "N"],
-            ["V", "E", "T", "I", "G", "N"],
-            ["B", "A", "L", "I", "Y", "T"],
-            ["E", "Z", "A", "V", "N", "D"],
-            ["R", "A", "L", "E", "S", "C"],
-            ["U", "W", "I", "L", "R", "G"],
-            ["P", "A", "C", "E", "M", "D"]];
-
-let die = ["A", "B", "C", "D",
-           "E", "F", "G", "H",
-           "I", "J", "K", "L",
-           "M", "N", "O", "P"];
+let die = ["", "", "", "",
+           "", "", "", "",
+           "", "", "", "",
+           "", "", "", ""];
 
 let dieCoords = ["00", "01", "02", "03",
                  "10", "11", "12", "13",
@@ -44,6 +27,7 @@ let lastSelected = "";
         socket.emit("conn");
         socket.on("initialization", function(msg) {
             die = msg["die"];
+            words = msg["words"];
 
             for (let i = 0; i < dieCoords.length; i++) {
                 document.getElementById(dieCoords[i]).innerHTML = die[i];
@@ -73,6 +57,13 @@ let lastSelected = "";
                         }
                     }
                 );
+            }
+
+            document.getElementById("wordListInterior").innerHTML = "";
+            for (let i = 0; i < words.length; i++) {
+                document.getElementById("wordListInterior").innerHTML = (
+                    "<p class=wordListElement>" + words[i] + "</p>" +
+                    document.getElementById("wordListInterior").innerHTML);
             }
         });
 

@@ -46,21 +46,22 @@ get_die()
 
 @app.route("/")
 def index():
-    global words
-    words = []
     return render_template("index.html", sync_mode=socket_.async_mode)
 
 @socket_.on("conn", namespace="/game")
 def init_client():
-    emit("initialization", {"die": die})
+    emit("initialization", {"die": die, "words": words})
 
 @socket_.on("shuffle", namespace="/game")
 def shuff():
+    global words
+    words = []
     get_die()
-    emit("initialization", {"die": die}, broadcast=True)
+    emit("initialization", {"die": die, "words": words}, broadcast=True)
 
 @socket_.on("submit", namespace="/game")
 def submit(word):
+    global words
     word = word["data"].lower()
     if word in words:
         return
