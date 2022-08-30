@@ -6,6 +6,13 @@ body {
   margin-top: 4vw;
 }
 
+#shuffle {
+  float: left;
+  width: 5vw;
+  height: 5vw;
+  background-color: red;
+}
+
 .row {
   display: flex;
   flex-direction: row;

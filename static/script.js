@@ -33,27 +33,6 @@ let selected = [false, false, false, false,
 let word = "";
 let lastSelected = "";
 
-function shuffle(array) {
-  // taken from: https://stackoverflow.com/questions/2450954/how-to-randomize-shuffle-a-javascript-array
-  // August 19, 2022
-
-  let currentIndex = array.length,  randomIndex;
-
-  // While there remain elements to shuffle.
-  while (currentIndex != 0) {
-
-    // Pick a remaining element.
-    randomIndex = Math.floor(Math.random() * currentIndex);
-    currentIndex--;
-
-    // And swap it with the current element.
-    [array[currentIndex], array[randomIndex]] = [
-      array[randomIndex], array[currentIndex]];
-  }
-
-  return array;
-}
-
 (function(window, document, undefined) {
     window.onload = init;
 
@@ -61,41 +40,41 @@ function shuffle(array) {
         namespace = "/game";
         var socket = io(namespace);
 
-        let arr = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15];
-        arr = shuffle(arr);
-        for (let i = 0; i < die.length; i++) {
-            die[i] = dice[arr[i]][Math.floor(Math.random()*5)];
-        }
-    
-        for (let i = 0; i < dieCoords.length; i++) {
-            document.getElementById(dieCoords[i]).innerHTML = die[i];
-            document.getElementById(dieCoords[i]).addEventListener(
-                "click", function (event) {
-                    if (!selected[i]) {
-                        if (lastSelected != "") {
-                            lastSelected = parseInt(lastSelected);
+        // get initial data on successful connection
+        socket.emit("conn");
+        socket.on("initialization", function(msg) {
+            die = msg["die"];
 
-                            if (!(dieCoords[i] == lastSelected-10
-                               || dieCoords[i] == lastSelected+10
-                               || dieCoords[i] == lastSelected-1
-                               || dieCoords[i] == lastSelected+1
-                               || dieCoords[i] == lastSelected-10-1
-                               || dieCoords[i] == lastSelected-10+1
-                               || dieCoords[i] == lastSelected+10-1
-                               || dieCoords[i] == lastSelected+10+1)) {
-                                return false;
+            for (let i = 0; i < dieCoords.length; i++) {
+                document.getElementById(dieCoords[i]).innerHTML = die[i];
+                document.getElementById(dieCoords[i]).addEventListener(
+                    "click", function (event) {
+                        if (!selected[i]) {
+                            if (lastSelected != "") {
+                                lastSelected = parseInt(lastSelected);
+
+                                if (!(dieCoords[i] == lastSelected-10
+                                   || dieCoords[i] == lastSelected+10
+                                   || dieCoords[i] == lastSelected-1
+                                   || dieCoords[i] == lastSelected+1
+                                   || dieCoords[i] == lastSelected-10-1
+                                   || dieCoords[i] == lastSelected-10+1
+                                   || dieCoords[i] == lastSelected+10-1
+                                   || dieCoords[i] == lastSelected+10+1)) {
+                                    return false;
+                                }
                             }
-                        }
 
-                        document.getElementById(dieCoords[i]).classList.add("selectedDie");
-                        word += die[i];
-                        document.getElementById("word").innerHTML = word;
-                        selected[i] = true;
-                        lastSelected = dieCoords[i];
+                            document.getElementById(dieCoords[i]).classList.add("selectedDie");
+                            word += die[i];
+                            document.getElementById("word").innerHTML += die[i];
+                            selected[i] = true;
+                            lastSelected = dieCoords[i];
+                        }
                     }
-                }
-            );
-        }
+                );
+            }
+        });
 
         document.getElementById("reset").addEventListener("click",
             function (event) {
@@ -113,6 +92,15 @@ function shuffle(array) {
             }
         );
 
+        document.getElementById("shuffle").addEventListener("click",
+            function (event) {
+                if (window.confirm("Are you sure you want to shuffle?")) {
+                    socket.emit("shuffle");
+                }
+                return false;
+            }
+        );
+
         socket.on("word_response", function(msg) {
             if (msg.valid) {
                 document.getElementById("wordListInterior").innerHTML = (
@@ -120,6 +108,7 @@ function shuffle(array) {
                     document.getElementById("wordListInterior").innerHTML);
             }
         });
+
     }
 
     function resetWord() {
