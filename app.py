@@ -57,7 +57,7 @@ def shuff():
     global words
     words = []
     get_die()
-    emit("initialization", {"die": die, "words": words}, broadcast=True)
+    emit("receiveShuffle", {"die": die, "words": words}, broadcast=True)
 
 @socket_.on("submit", namespace="/game")
 def submit(word):

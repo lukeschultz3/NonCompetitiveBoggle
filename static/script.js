@@ -14,7 +14,7 @@ let selected = [false, false, false, false,
                 false, false, false, false];
 
 let word = "";
-let lastSelected = "";
+let selectedOrder = [];
 
 (function(window, document, undefined) {
     window.onload = init;
@@ -34,8 +34,8 @@ let lastSelected = "";
                 document.getElementById(dieCoords[i]).addEventListener(
                     "click", function (event) {
                         if (!selected[i]) {
-                            if (lastSelected != "") {
-                                lastSelected = parseInt(lastSelected);
+                            if (selectedOrder.length != 0) {
+                                lastSelected = parseInt(dieCoords[selectedOrder[selectedOrder.length - 1]]);
 
                                 if (!(dieCoords[i] == lastSelected-10
                                    || dieCoords[i] == lastSelected+10
@@ -53,7 +53,15 @@ let lastSelected = "";
                             word += die[i];
                             document.getElementById("word").innerHTML += die[i];
                             selected[i] = true;
-                            lastSelected = dieCoords[i];
+                            selectedOrder.push(i);
+                        } else if (selectedOrder[selectedOrder.length - 1] == i) {
+                            document.getElementById(dieCoords[i]).classList.remove("selectedDie");
+                            word = word.slice(0, word.length-die[i].length);
+                            document.getElementById("word").innerHTML = (
+                                document.getElementById("word").innerHTML.slice(0, word.length)
+                            );
+                            selected[i] = false;
+                            selectedOrder.pop();
                         }
                     }
                 );
@@ -67,12 +75,26 @@ let lastSelected = "";
             }
         });
 
+        socket.on("receiveShuffle", function (msg) {
+            die = msg["die"];
+            words = msg["words"];
+            resetWord();
+
+            for (let i = 0; i < dieCoords.length; i++) {
+                document.getElementById(dieCoords[i]).innerHTML = die[i];
+            }
+
+            document.getElementById("wordListInterior").innerHTML = "";
+            for (let i = 0; i < words.length; i++) {
+                document.getElementById("wordListInterior").innerHTML = (
+                    "<p class=wordListElement>" + words[i] + "</p>" +
+                    document.getElementById("wordListInterior").innerHTML);
+            }
+        });
+
         document.getElementById("reset").addEventListener("click",
             function (event) {
                 resetWord();
-                word = "";
-                lastSelected = "";
-                document.getElementById("word").innerHTML = word;
             }
         );
 
@@ -107,9 +129,12 @@ let lastSelected = "";
             document.getElementById(dieCoords[i]).classList.remove("selectedDie");
         }
 
+        word = "";
+        document.getElementById("word").innerHTML = word;
         selected = [false, false, false, false,
                     false, false, false, false,
                     false, false, false, false,
                     false, false, false, false];
+        selectedOrder = [];
     }
 })(window, document, undefined);
