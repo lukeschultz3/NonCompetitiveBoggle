@@ -16,6 +16,10 @@ let selected = [false, false, false, false,
 let word = "";
 let selectedOrder = [];
 
+let found_words = new Set();  // TODO RESET WITH SHUFFLE
+
+set_valid_word_list(english_word_list);
+
 (function(window, document, undefined) {
     window.onload = init;
 
@@ -100,7 +104,16 @@ let selectedOrder = [];
 
         document.getElementById("submit").addEventListener("click",
             function (event) {
-                socket.emit("submit", {data: word});
+                //console.log(find_similar(word.toLowerCase(), 0.99));
+                let sim = find_similar(word.toLowerCase(), 0.99);
+                console.log(sim);
+                if (sim.length > 0 && sim[0][0] == word.toLowerCase()
+                        && !found_words.has(sim[0][0])) {
+                    validWord(sim[0][0]);
+                    found_words.add(sim[0][0]);
+                    console.log("valid");
+                }
+                //socket.emit("submit", {data: word});
                 return false;
             }
         );
@@ -114,6 +127,13 @@ let selectedOrder = [];
             }
         );
 
+        function validWord(word) {
+            document.getElementById("wordListInterior").innerHTML = (
+                "<p class=wordListElement>" + word + "</p>" +
+                document.getElementById("wordListInterior").innerHTML);
+        }
+
+        /*
         socket.on("word_response", function(msg) {
             if (msg.valid) {
                 document.getElementById("wordListInterior").innerHTML = (
@@ -121,6 +141,7 @@ let selectedOrder = [];
                     document.getElementById("wordListInterior").innerHTML);
             }
         });
+        */
 
     }
 
