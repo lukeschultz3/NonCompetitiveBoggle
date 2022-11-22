@@ -19,7 +19,7 @@ let selectedOrder = [];
 let found_words = new Set();  // TODO RESET WITH SHUFFLE
 
 let dictionary = new Typo("en_US", false, false,
-                          { dictionaryPath: "/static/Typo.js-master/typo/dictionaries" });
+                          { dictionaryPath: "static/Typo.js-master/typo/dictionaries" });
 
 dice_set = [["R", "I", "F", "O", "B", "X"],
             ["I", "F", "E", "H", "E", "Y"],
