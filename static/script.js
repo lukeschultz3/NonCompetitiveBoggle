@@ -18,7 +18,8 @@ let selectedOrder = [];
 
 let found_words = new Set();  // TODO RESET WITH SHUFFLE
 
-set_valid_word_list(english_word_list);
+let dictionary = new Typo("en_US", false, false,
+                          { dictionaryPath: "/static/Typo.js-master/typo/dictionaries" });
 
 (function(window, document, undefined) {
     window.onload = init;
@@ -104,16 +105,13 @@ set_valid_word_list(english_word_list);
 
         document.getElementById("submit").addEventListener("click",
             function (event) {
-                //console.log(find_similar(word.toLowerCase(), 0.99));
-                let sim = find_similar(word.toLowerCase(), 0.99);
-                console.log(sim);
-                if (sim.length > 0 && sim[0][0] == word.toLowerCase()
-                        && !found_words.has(sim[0][0])) {
-                    validWord(sim[0][0]);
-                    found_words.add(sim[0][0]);
-                    console.log("valid");
+                let is_spelled_correctly = dictionary.check(word);
+
+                if (is_spelled_correctly) {
+                    validWord(word);
+                    return true;
                 }
-                //socket.emit("submit", {data: word});
+
                 return false;
             }
         );
