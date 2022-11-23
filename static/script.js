@@ -82,7 +82,7 @@ function init() {
                     // make sure it is adjacent to previous
                     if (selectedOrder.length != 0) {
                         lastSelected = parseInt(
-                            dieCoords[selectedOrder[selectedOrder.length - 1]
+                            dieCoords[selectedOrder[selectedOrder.length - 1]]
                         );  // get last selected die
 
                         if (!(dieCoords[i] == lastSelected-10
