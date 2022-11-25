@@ -1,5 +1,5 @@
 run:
-	flask run --host=0.0.0.0
+	python3 -m http.server
 
 clean:
 	rm -r __pycache__
